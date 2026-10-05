@@ -5,6 +5,9 @@ Defines configuration settings for Flask, SQLAlchemy Database, Security, and Arg
 
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -12,7 +15,7 @@ class Config:
     """Base Configuration Class"""
     
     # Secret Key for Session Signing & CSRF Protection
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'quantumshield-pqc-post-quantum-secure-key-2026-super-secret'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     
     # Database Configuration (MySQL by default, fallback to local SQLite for portable dev)
     MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
