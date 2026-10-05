@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}User Registration | QuantumShield PQC{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="glass-card p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="text-primary mb-2"><i class="fa-solid fa-user-plus fa-3x"></i></div>
+                    <h3 class="text-dark fw-bold">Create QuantumShield Account</h3>
+                    <p class="text-muted small">Protected by Argon2id & CRYSTALS-Kyber-512</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('auth.register') }}">
+                    {{ form.hidden_tag() }}
+
+                    <!-- Username Field -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label text-dark fw-medium">Username</label>
+                        {{ form.username(class="form-control form-control-cyber", id="username", placeholder="e.g. cyber_hero") }}
+                        {% for error in form.username.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label text-dark fw-medium">Email Address</label>
+                        {{ form.email(class="form-control form-control-cyber", id="email", placeholder="user@example.com") }}
+                        {% for error in form.email.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Password Field & Strength Meter -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label text-dark fw-medium">Password</label>
+                        {{ form.password(class="form-control form-control-cyber", id="password", placeholder="••••••••••••") }}
+                        
+                        <div class="mt-2">
+                            <div class="progress" style="height: 6px; background-color: #e2e8f0;">
+                                <div id="strength-bar" class="strength-meter-bar" role="progressbar"></div>
+                            </div>
+                            <div id="strength-text" class="small mt-1"></div>
+                        </div>
+
+                        <div class="form-text text-muted small mt-2">
+                            <i class="fa-solid fa-circle-info me-1"></i> Policy: Min 8 chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char (!@#$%^&*).
+                        </div>
+
+                        {% for error in form.password.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="mb-4">
+                        <label for="confirm_password" class="form-label text-dark fw-medium">Confirm Password</label>
+                        {{ form.confirm_password(class="form-control form-control-cyber", id="confirm_password", placeholder="••••••••••••") }}
+                        {% for error in form.confirm_password.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- PQC KeyGen Info Box -->
+                    <div class="p-3 mb-4 rounded bg-light border border-secondary-subtle">
+                        <div class="d-flex align-items-center">
+                            <i class="fa-solid fa-atom text-primary me-2 fa-lg"></i>
+                            <span class="small text-secondary">
+                                Registration automatically generates a <strong>Kyber-512 lattice key pair</strong> and computes a <strong>BLAKE2b-512 Quantum Commitment</strong>.
+                            </span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-cyber w-100 py-2 fs-6">
+                        <i class="fa-solid fa-shield-halved me-2"></i> Register & Generate PQC Credentials
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted small mb-0">Already registered? 
+                        <a href="{{ url_for('auth.login') }}" class="text-primary fw-bold text-decoration-none">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

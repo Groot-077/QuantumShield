@@ -1,0 +1,292 @@
+/* 
+ * QuantumShield Theme System
+ * Supports Dynamic Light / Dark Mode via [data-theme="dark"]
+ */
+
+:root {
+    /* Light Theme Variables (Default) */
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --accent-blue: #2563eb;
+    --accent-cyan: #0284c7;
+    --accent-teal: #0d9488;
+    --accent-emerald: #10b981;
+    --accent-warning: #d97706;
+    --accent-danger: #dc2626;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --border-hover: #cbd5e1;
+    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+    --hover-shadow: 0 12px 30px -4px rgba(2, 132, 199, 0.15);
+    --navbar-bg: rgba(255, 255, 255, 0.95);
+    --key-box-bg: #f1f5f9;
+    --key-box-border: #cbd5e1;
+    --key-box-text: #0284c7;
+    --table-header-bg: #f8fafc;
+    --input-bg: #ffffff;
+    --box-light-bg: #f8fafc;
+}
+
+[data-theme="dark"] {
+    /* Dark Cyber Theme Variables */
+    --bg-primary: #0a0d14;
+    --bg-secondary: #121824;
+    --bg-card: rgba(18, 24, 36, 0.9);
+    --accent-blue: #3b82f6;
+    --accent-cyan: #00f2fe;
+    --accent-teal: #14b8a6;
+    --accent-emerald: #10b981;
+    --accent-warning: #f59e0b;
+    --accent-danger: #ef4444;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-color: rgba(0, 242, 254, 0.18);
+    --border-hover: rgba(0, 242, 254, 0.45);
+    --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    --hover-shadow: 0 12px 40px 0 rgba(0, 242, 254, 0.2);
+    --navbar-bg: rgba(10, 13, 20, 0.92);
+    --key-box-bg: #06090e;
+    --key-box-border: rgba(0, 242, 254, 0.25);
+    --key-box-text: #00f2fe;
+    --table-header-bg: #121824;
+    --input-bg: rgba(18, 24, 36, 0.8);
+    --box-light-bg: #121824;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Override Bootstrap text utility classes in Dark Mode */
+[data-theme="dark"] .text-dark {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .text-secondary {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .bg-light {
+    background-color: #121824 !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .border-secondary-subtle {
+    border-color: rgba(0, 242, 254, 0.2) !important;
+}
+
+[data-theme="dark"] .list-group-item {
+    color: #f8fafc !important;
+    border-color: rgba(0, 242, 254, 0.15) !important;
+}
+
+/* Background Cyber Grid effect */
+.cyber-bg {
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(37, 99, 235, 0.05) 0%, transparent 40%);
+}
+
+/* Navigation Bar */
+.navbar-custom {
+    background: var(--navbar-bg);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text-primary) !important;
+}
+
+.navbar-brand span {
+    color: var(--accent-cyan);
+}
+
+.nav-link {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--accent-cyan) !important;
+}
+
+/* Cards with Glass Effect */
+.glass-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    color: var(--text-primary);
+    transition: all 0.3s ease-in-out;
+}
+
+.glass-card:hover {
+    border-color: var(--accent-cyan);
+    box-shadow: var(--hover-shadow);
+}
+
+/* Buttons */
+.btn-cyber {
+    background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
+    color: #ffffff !important;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 24px;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
+    transition: all 0.25s ease;
+}
+
+.btn-cyber:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+}
+
+.btn-cyber-outline {
+    background: transparent;
+    color: var(--accent-cyan) !important;
+    border: 1.5px solid var(--accent-cyan);
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 10px 24px;
+    transition: all 0.25s ease;
+}
+
+.btn-cyber-outline:hover {
+    background: rgba(2, 132, 199, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Theme Switcher Button */
+.btn-theme-toggle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-theme-toggle:hover {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    transform: rotate(15deg);
+}
+
+/* Badges */
+.badge-pqc {
+    background: rgba(2, 132, 199, 0.12);
+    color: var(--accent-cyan);
+    border: 1px solid rgba(2, 132, 199, 0.3);
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+
+.badge-argon {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--accent-emerald);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+
+/* Password Strength Meter */
+.strength-meter-bar {
+    height: 6px;
+    border-radius: 3px;
+    transition: width 0.4s ease, background-color 0.4s ease;
+    width: 0%;
+}
+
+.strength-weak { background-color: var(--accent-danger); width: 25%; }
+.strength-fair { background-color: var(--accent-warning); width: 50%; }
+.strength-good { background-color: var(--accent-cyan); width: 75%; }
+.strength-strong { background-color: var(--accent-emerald); width: 100%; }
+
+/* Form Controls */
+.form-control-cyber {
+    background: var(--input-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 10px;
+    padding: 12px 16px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.form-control-cyber:focus {
+    border-color: var(--accent-cyan) !important;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2) !important;
+}
+
+/* Key Boxes */
+.key-box {
+    background: var(--key-box-bg);
+    border: 1px solid var(--key-box-border);
+    color: var(--key-box-text);
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.85rem;
+    padding: 14px;
+    border-radius: 10px;
+    word-break: break-all;
+}
+
+/* Tables */
+.table-custom {
+    color: var(--text-primary);
+}
+
+.table-custom th {
+    background: var(--table-header-bg);
+    color: var(--text-secondary);
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table-custom td {
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .table-custom th {
+    background: #121824;
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .table-custom td {
+    color: #f8fafc;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}

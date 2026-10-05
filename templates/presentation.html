@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantumShield Project Presentation Deck</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --ppt-bg: #0f172a;
+            --ppt-card-bg: #1e293b;
+            --ppt-accent: #0284c7;
+            --ppt-text-main: #f8fafc;
+            --ppt-text-sub: #cbd5e1;
+            --ppt-border: rgba(2, 132, 199, 0.25);
+        }
+
+        body {
+            background-color: #020617;
+            color: var(--ppt-text-main);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* 16:9 Presentation Stage */
+        .ppt-stage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 70px);
+            padding: 20px;
+        }
+
+        .ppt-slide {
+            width: 100%;
+            max-width: 1100px;
+            aspect-ratio: 16 / 9;
+            background: var(--ppt-card-bg);
+            border: 1px solid var(--ppt-border);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            padding: 45px 55px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .ppt-slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .ppt-header {
+            border-bottom: 2px solid var(--ppt-border);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .ppt-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--ppt-text-main);
+        }
+
+        .ppt-subtitle {
+            font-size: 0.95rem;
+            color: var(--ppt-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .ppt-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            color: var(--ppt-text-sub);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .ppt-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 12px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        /* Control Bar */
+        .ppt-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--ppt-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 1000;
+        }
+
+        .btn-slide-nav {
+            background: var(--ppt-accent);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-slide-nav:hover {
+            background: #0369a1;
+            transform: translateY(-1px);
+        }
+
+        .btn-slide-nav:disabled {
+            background: #334155;
+            color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Slide Specific Tables & Badges */
+        .table-ppt {
+            color: var(--ppt-text-main);
+            border-color: var(--ppt-border);
+        }
+
+        .table-ppt th {
+            background: #0f172a;
+            color: var(--ppt-accent);
+            font-size: 0.9rem;
+        }
+
+        .table-ppt td {
+            font-size: 0.9rem;
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .ppt-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--ppt-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+        }
+
+        /* Print styles */
+        @media print {
+            .ppt-controls, nav { display: none !important; }
+            .ppt-stage { padding: 0; min-height: auto; }
+            .ppt-slide { display: flex !important; page-break-after: always; aspect-ratio: 16 / 9; max-width: 100%; border: 1px solid #ccc; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar navbar-dark bg-dark px-4 py-2 border-bottom border-secondary">
+        <a class="navbar-brand fw-bold text-info" href="{{ url_for('main.index') }}">
+            <i class="fa-solid fa-arrow-left me-2"></i> Back to Main App
+        </a>
+        <span class="badge bg-primary fs-6"><i class="fa-solid fa-file-powerpoint me-1"></i> QuantumShield PowerPoint Slide Deck</span>
+        <div>
+            <button class="btn btn-sm btn-outline-light me-2" onclick="toggleFullScreen()"><i class="fa-solid fa-expand me-1"></i> Full Screen</button>
+            <button class="btn btn-sm btn-outline-info" onclick="window.print()"><i class="fa-solid fa-print me-1"></i> Export PDF</button>
+        </div>
+    </nav>
+
+    <!-- Slide Stage Container -->
+    <div class="ppt-stage">
+
+        <!-- SLIDE 1: Title & Team Details -->
+        <div class="ppt-slide active" id="slide-1">
+            <div class="ppt-header">
+                <div class="ppt-subtitle">B.Tech Cyber Security Capstone Presentation</div>
+                <div class="ppt-title text-info">QuantumShield Framework</div>
+            </div>
+            <div class="ppt-body">
+                <p class="lead text-light mb-4">
+                    A Post-Quantum Secure Password Authentication Framework Using Memory-Hard Hashing and Lattice Cryptography
+                </p>
+
+                <h6 class="text-info fw-bold text-uppercase mb-3"><i class="fa-solid fa-users me-2"></i> Project Team Members</h6>
+                <div class="table-responsive">
+                    <table class="table table-ppt align-middle">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 10%;">S.No</th>
+                                <th>Student Name</th>
+                                <th class="text-center">Registration Number</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center fw-bold text-info">1</td>
+                                <td class="fw-bold text-white">Jaipal Prakash</td>
+                                <td class="text-center font-monospace text-info">23BCE0310</td>
+                            </tr>
+                            <tr>
+                                <td class="text-center fw-bold text-info">2</td>
+                                <td class="fw-bold text-white">Nikhil Kumar</td>
+                                <td class="text-center font-monospace text-info">23BCE0404</td>
+                            </tr>
+                            <tr>
+                                <td class="text-center fw-bold text-info">3</td>
+                                <td class="fw-bold text-white">Ujjawal Kumar</td>
+                                <td class="text-center font-monospace text-info">23BCE0354</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="ppt-footer">
+                <span>QuantumShield Framework © 2026 B.Tech Cyber Security Project</span>
+                <span>Slide 1 of 8</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Abstract -->
+        <div class="ppt-slide" id="slide-2">
+            <div class="ppt-header">
+                <div class="ppt-subtitle">Executive Overview</div>
+                <div class="ppt-title">Project Abstract</div>
+            </div>
+            <div class="ppt-body">
+                <div class="ppt-box mb-3">
+                    <p class="mb-0 text-light">
+                        With the rapid advancement of quantum computing, conventional password authentication mechanisms are becoming increasingly vulnerable to quantum attacks. Traditional password hashing algorithms alone may not provide sufficient long-term protection against future quantum-enabled adversaries.
+                    </p>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <div class="ppt-box h-100">
+                            <h6 class="text-info fw-bold mb-2"><i class="fa-solid fa-shield-halved me-1"></i> Core Innovation</h6>
+                            <p class="small text-sub mb-0">Combines Argon2id memory-hard password hashing with CRYSTALS-Kyber-512 lattice post-quantum cryptography to guarantee zero-knowledge credential verification.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="ppt-box h-100">
+                            <h6 class="text-success fw-bold mb-2"><i class="fa-solid fa-code me-1"></i> Tech Implementation</h6>
+                            <p class="small text-sub mb-0">Web-based application built using Python Flask, MySQL, HTML5, CSS3, Vanilla JavaScript, and Bootstrap 5.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ppt-footer">
+                <span>QuantumShield Framework © 2026 B.Tech Cyber Security Project</span>
+                <span>Slide 2 of 8</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Problem Statement & Objectives -->
+        <div class="ppt-slide" id="slide-3">
+            <div class="ppt-header">
+                <div class="ppt-subtitle">Motivation & Scope</div>
+                <div class="ppt-title">Problem Statement & Objectives</div>
+            </div>
+            <div class="ppt-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6 class="text-danger fw-bold text-uppercase mb-2"><i class="fa-solid fa-triangle-exclamation me-1"></i> Problem Statement</h6>
+                        <div class="ppt-box border-danger">
+                            <p class="small text-sub mb-2">• <strong>Quantum Cryptanalysis:</strong> Quantum computers running Shor's and Grover's algorithms compromise classical public-key cryptography and reduce hash entropy.</p>
+                            <p class="small text-sub mb-2">• <strong>GPU Brute-Forcing:</strong> Standard hashes (SHA-256, MD5) allow billions of parallel dictionary attempts per second.</p>
+                            <p class="small text-sub mb-0">• <strong>Lack of PQC Integration:</strong> Existing authentication infrastructure lacks post-quantum binding mechanisms.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="text-info fw-bold text-uppercase mb-2"><i class="fa-solid fa-bullseye me-1"></i> Key Objectives</h6>
+                        <div class="ppt-box border-info">
+                            <p class="small text-sub mb-2">1. Design a memory-hard password system using <strong>Argon2id</strong>.</p>
+                            <p class="small text-sub mb-2">2. Integrate <strong>CRYSTALS-Kyber-512</strong> Post-Quantum Cryptography.</p>
+                            <p class="small text-sub mb-2">3. Create an unforgeable <strong>Quantum Commitment ($C_q$)</strong> token.</p>
+                            <p class="small text-sub mb-0">4. Implement anti-brute-force lockout and audit history logging.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ppt-footer">
+                <span>QuantumShield Framework © 2026 B.Tech Cyber Security Project</span>
+                <span>Slide 3 of 8</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Literature Survey & Research Gap -->
+        <div class="ppt-slide" id="slide-4">
+            <div class="ppt-header">
+                <div class="ppt-subtitle">Background Study</div>
+                <div class="ppt-title">Literature Survey & Research Gap</div>
+            </div>
+            <div class="ppt-body">
+                <div class="table-responsive mb-3">
+                    <table class="table table-ppt align-middle">
+                        <thead>
+                            <tr>
+                                <th>Author / Research</th>
+                                <th>Contribution</th>
+                                <th>Identified Limitation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold text-info">Alex Biryukov et al. (Argon2)</td>
+                                <td>Introduced Argon2 memory-hard password hashing algorithm.</td>
+                                <td>No post-quantum cryptographic key binding mechanism.</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-info">NIST PQC Project</td>
+                                <td>Standardized quantum-resistant algorithms (CRYSTALS-Kyber).</td>
+                                <td>Focuses on key exchange; lacks web password auth integration.</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold text-info">Open Quantum Safe (liboqs)</td>
+                                <td>Open-source implementation of PQC primitives.</td>
+                                <td>Limited practical application frameworks for user password auth.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="ppt-box border-warning">
+                    <h6 class="text-warning fw-bold mb-1"><i class="fa-solid fa-lightbulb me-1"></i> Research Gap Addressed</h6>
+                    <p class="small text-sub mb-0">
+                        Existing authentication systems rely solely on classical hashes and lack practical frameworks combining memory-hard password hashing with lattice cryptography. QuantumShield resolves this by unifying Argon2id and CRYSTALS-Kyber.
+                    </p>
+                </div>
+            </div>
+            <div class="ppt-footer">
+                <span>QuantumShield Framework © 2026 B.Tech Cyber Security Project</span>
+                <span>Slide 4 of 8</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Architecture Diagram & Explanation -->
+        <div class="ppt-slide" id="slide-5">
+            <div class="ppt-header">
+                <div class="ppt-subtitle">System Design</div>
+                <div class="ppt-title">Proposed Architecture & Pipeline</div>
+            </div>
+            <div class="ppt-body">
+                <div class="ppt-box text-center mb-3">
+                    <div class="font-monospace text-info small">
+                        [User Input] ➔ [Validation] ➔ [Salt (16B)] ➔ [Argon2id Hash] ➔ [Kyber-512 Keygen] ➔ [Quantum Commitment C_q] ➔ [MySQL Persistence]
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="ppt-box h-100">
+                            <h6 class="text-info fw-bold mb-1">1. Memory-Hard Hashing</h6>
+                            <p class="small text-sub mb-0">Argon2id ($m=64\text{MB}, t=3, p=4$) allocates 64MB RAM per hash thread to block parallel GPU/ASIC cracking arrays.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="ppt-box h-100">
+                            <h6 class="text-success fw-bold mb-1">2. Quantum Commitment ($C_q$)</h6>
+                            <p class="small text-sub mb-0">$C_q = \text{BLAKE2b-512}(pk \parallel Argon2Hash \parallel Salt)$. Re-verified in constant-time during authentication.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ppt-footer">
+                <span>QuantumShield Framework © 2026 B.Tech Cyber Security Project</span>
+                <span>Slide 5 of 8</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Methodology -->
+        <div class="ppt-slide" id="slide-6">
+            <div class="ppt-header">
+                <div class="ppt-subtitle">Implementation Strategy</div>
+                <div class="ppt-title">Methodology Used</div>
+            </div>
+            <div class="ppt-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="ppt-box h-100">
+                            <span class="badge bg-primary mb-2">Phase 1 & 2</span>
+                            <h6 class="text-white fw-bold mb-1">Analysis & Design</h6>
+                            <p class="small text-sub mb-0">Studied Shor's/Grover's threats, designed database ER schema, and defined Flask Blueprint MVC modular structure.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="ppt-box h-100">
+                            <span class="badge bg-success mb-2">Phase 3</span>
+                            <h6 class="text-white fw-bold mb-1">Development</h6>
+                            <p class="small text-sub mb-0">Built Python Flask backend, MySQL ORM models, Argon2id hasher, Kyber-512 engine, and modern Bootstrap 5 UI.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="ppt-box h-100">
+                            <span class="badge bg-warning text-dark mb-2">Phase 4 & 5</span>
+                            <h6 class="text-white fw-bold mb-1">Testing & Deployment</h6>
+                            <p class="small text-sub mb-0">Tested account lockout (5 failed attempts), SQLi/XSS prevention, CSRF validation, and deployed server on localhost.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ppt-footer">
+                <span>QuantumShield Framework © 2026 B.Tech Cyber Security Project</span>
+                <span>Slide 6 of 8</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Expected Results -->
+        <div class="ppt-slide" id="slide-7">
+            <div class="ppt-header">
+                <div class="ppt-subtitle">System Evaluation</div>
+                <div class="ppt-title">Expected Results & Achievements</div>
+            </div>
+            <div class="ppt-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="ppt-box h-100 border-success">
+                            <h6 class="text-success fw-bold mb-2"><i class="fa-solid fa-circle-check me-1"></i> Verified Results</h6>
+                            <p class="small text-sub mb-2">✔ <strong>GPU Cracking Immunity:</strong> 64MB memory-hard parameter stops mass dictionary attacks.</p>
+                            <p class="small text-sub mb-2">✔ <strong>Quantum Commitment Integrity:</strong> BLAKE2b digest comparison prevents payload tampering.</p>
+                            <p class="small text-sub mb-0">✔ <strong>Dual-Layer Authentication:</strong> Both Argon2id hash and Kyber commitment must match.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="ppt-box h-100 border-info">
+                            <h6 class="text-info fw-bold mb-2"><i class="fa-solid fa-user-shield me-1"></i> Admin SOC Controls</h6>
+                            <p class="small text-sub mb-2">• Live 7-day authentication line graph rendered using Chart.js.</p>
+                            <p class="small text-sub mb-2">• Complete user CRUD management and manual lock/unlock toggle controls.</p>
+                            <p class="small text-sub mb-0">• Comprehensive audit log stream tracking IP addresses and browser signatures.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ppt-footer">
+                <span>QuantumShield Framework © 2026 B.Tech Cyber Security Project</span>
+                <span>Slide 7 of 8</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Conclusion & Future Scope -->
+        <div class="ppt-slide" id="slide-8">
+            <div class="ppt-header">
+                <div class="ppt-subtitle">Final Summary</div>
+                <div class="ppt-title">Conclusion & Future Roadmap</div>
+            </div>
+            <div class="ppt-body">
+                <div class="ppt-box mb-3 border-info">
+                    <h6 class="text-info fw-bold mb-1"><i class="fa-solid fa-flag-checkered me-1"></i> Conclusion</h6>
+                    <p class="small text-sub mb-0">
+                        QuantumShield successfully provides a quantum-resistant password authentication framework combining Argon2id memory-hard hashing and CRYSTALS-Kyber lattice key generation into a scalable, production-grade web application suitable for a B.Tech Cyber Security Capstone.
+                    </p>
+                </div>
+
+                <div class="ppt-box border-warning">
+                    <h6 class="text-warning fw-bold mb-1"><i class="fa-solid fa-rocket me-1"></i> Future Scope</h6>
+                    <p class="small text-sub mb-1">1. <strong>CRYSTALS-Dilithium Signatures:</strong> Digital signature integration for JWT session payloads.</p>
+                    <p class="small text-sub mb-0">2. <strong>HSM / TPM Isolation:</strong> Hardware Security Module isolation for private lattice key storage.</p>
+                </div>
+            </div>
+            <div class="ppt-footer">
+                <span>QuantumShield Framework © 2026 B.Tech Cyber Security Project</span>
+                <span>Slide 8 of 8</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation Bar & Controls -->
+    <div class="ppt-controls">
+        <button id="btn-prev" class="btn-slide-nav" onclick="changeSlide(-1)">
+            <i class="fa-solid fa-arrow-left me-1"></i> Previous
+        </button>
+        
+        <div class="text-center font-monospace small">
+            <span id="current-slide-num" class="text-info fw-bold fs-5">1</span> / <span class="text-muted fs-6">8</span>
+        </div>
+
+        <button id="btn-next" class="btn-slide-nav" onclick="changeSlide(1)">
+            Next <i class="fa-solid fa-arrow-right ms-1"></i>
+        </button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 8;
+
+        function changeSlide(direction) {
+            const nextSlide = currentSlide + direction;
+            if (nextSlide >= 1 && nextSlide <= totalSlides) {
+                document.getElementById(`slide-${currentSlide}`).classList.remove('active');
+                currentSlide = nextSlide;
+                document.getElementById(`slide-${currentSlide}`).classList.add('active');
+                
+                document.getElementById('current-slide-num').textContent = currentSlide;
+                document.getElementById('btn-prev').disabled = (currentSlide === 1);
+                document.getElementById('btn-next').disabled = (currentSlide === totalSlides);
+            }
+        }
+
+        // Keyboard Controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space' || e.key === 'PageDown') {
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                changeSlide(-1);
+            }
+        });
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

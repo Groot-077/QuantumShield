@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}PQC & Argon2id In-Depth | QuantumShield{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row align-items-center mb-4">
+        <div class="col-lg-9">
+            <span class="badge badge-pqc mb-2">Cryptographic Foundations</span>
+            <h1 class="text-dark fw-bold">Post-Quantum Cryptography & Memory-Hard Hashing</h1>
+            <p class="lead text-secondary">Comprehensive technical breakdown of how QuantumShield mitigates quantum attacks and GPU brute-forcing.</p>
+        </div>
+        <div class="col-lg-3 text-lg-end">
+            {% if session.get('user_id') %}
+            <a href="{{ url_for('user.dashboard') }}" class="btn btn-cyber-outline">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+            </a>
+            {% else %}
+            <a href="{{ url_for('main.index') }}" class="btn btn-cyber-outline">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Home
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Section 1: The Quantum Threat -->
+    <div class="glass-card p-4 p-md-5 mb-4">
+        <h3 class="text-dark fw-bold mb-3">
+            <i class="fa-solid fa-atom text-primary me-2"></i> 1. The Quantum Threat & Shor's Algorithm
+        </h3>
+        <p class="text-secondary">
+            Classical public-key infrastructure (RSA, ECC, Diffie-Hellman) relies on the computational difficulty of integer factorization and discrete logarithms. 
+            When large-scale fault-tolerant quantum computers emerge, <strong>Shor's Algorithm</strong> will solve these problems in polynomial time ($\mathcal{O}(n^3)$), rendering classical asymmetric encryption obsolete.
+        </p>
+        <div class="p-3 bg-light rounded border border-secondary-subtle text-dark font-monospace small">
+            <strong>Classical RSA-2048 Security:</strong> $2^{112}$ operations (Classical Computer: ~10,000 years)<br>
+            <strong>Quantum Shor's Attack:</strong> ~4,096 logical qubits (~10 seconds execution time)
+        </div>
+    </div>
+
+    <!-- Section 2: CRYSTALS-Kyber Lattice Cryptography -->
+    <div class="glass-card p-4 p-md-5 mb-4">
+        <h3 class="text-dark fw-bold mb-3">
+            <i class="fa-solid fa-vector-square text-success me-2"></i> 2. CRYSTALS-Kyber (Module-LWE)
+        </h3>
+        <p class="text-secondary">
+            Selected by NIST for post-quantum standardisation (FIPS 203), <strong>CRYSTALS-Kyber</strong> is a Key Encapsulation Mechanism (KEM) based on the hardness of the <strong>Module Learning With Errors (M-LWE)</strong> problem over polynomial rings $\mathbb{R}_q = \mathbb{Z}_q[X]/(X^n + 1)$.
+        </p>
+
+        <div class="row g-3 my-2">
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded text-center border border-primary-subtle">
+                    <h6 class="text-primary font-monospace mb-1">Key Generation</h6>
+                    <p class="small text-muted mb-0">$pk = (A s + e, \text{seed}_A)$<br>$sk = s$</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded text-center border border-warning-subtle">
+                    <h6 class="text-warning font-monospace mb-1">Encapsulation</h6>
+                    <p class="small text-muted mb-0">Input: $pk$<br>Output: Ciphertext $c$, Shared Secret $K$</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded text-center border border-success-subtle">
+                    <h6 class="text-success font-monospace mb-1">Decapsulation</h6>
+                    <p class="small text-muted mb-0">Input: $c, sk$<br>Output: Shared Secret $K$</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Argon2id Memory-Hard Hashing -->
+    <div class="glass-card p-4 p-md-5 mb-4">
+        <h3 class="text-dark fw-bold mb-3">
+            <i class="fa-solid fa-memory text-warning me-2"></i> 3. Argon2id Memory-Hard Hashing
+        </h3>
+        <p class="text-secondary">
+            Winner of the Password Hashing Competition (PHC), <strong>Argon2id</strong> is a hybrid password hashing algorithm. It uses data-independent memory accesses (Argon2i) for the first pass to resist side-channel timing attacks, followed by data-dependent memory accesses (Argon2d) to maximize GPU/ASIC cracking resistance.
+        </p>
+
+        <div class="table-responsive">
+            <table class="table table-custom align-middle">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>QuantumShield Setting</th>
+                        <th>Security Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-monospace">Memory Cost ($m$)</td>
+                        <td class="font-monospace text-success fw-bold">65,536 KB (64 MB)</td>
+                        <td>Forces attackers to allocate 64MB RAM per thread, disabling mass parallel GPU cracking.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-monospace">Time Cost ($t$)</td>
+                        <td class="font-monospace text-success fw-bold">3 Iterations</td>
+                        <td>Increases execution latency to prevent fast online brute-forcing.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-monospace">Parallelism ($p$)</td>
+                        <td class="font-monospace text-success fw-bold">4 Threads</td>
+                        <td>Utilizes multi-core CPU architectures effectively.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

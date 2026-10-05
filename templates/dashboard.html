@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard | QuantumShield PQC{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header Greeting -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h2 class="text-dark fw-bold">
+                <i class="fa-solid fa-gauge-high text-primary me-2"></i> User Control Center
+            </h2>
+            <p class="text-secondary">Welcome back, <strong class="text-primary">{{ user.username }}</strong>! Your session is protected by lattice cryptography.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('user.profile') }}" class="btn btn-cyber-outline me-2">
+                <i class="fa-solid fa-user-pen me-1"></i> Edit Profile
+            </a>
+            <a href="{{ url_for('user.quantum_keys') }}" class="btn btn-cyber">
+                <i class="fa-solid fa-key me-1"></i> View PQC Keys
+            </a>
+        </div>
+    </div>
+
+    <!-- Security KPI Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="glass-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small">Account ID</span>
+                    <i class="fa-solid fa-id-card text-primary"></i>
+                </div>
+                <h3 class="text-dark font-monospace mb-0">#{{ user.id }}</h3>
+                <span class="badge bg-success-subtle text-success border border-success-subtle mt-2">Active & Validated</span>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="glass-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small">Argon2id Hash Status</span>
+                    <i class="fa-solid fa-memory text-success"></i>
+                </div>
+                <h5 class="text-success font-monospace mb-0">Memory-Hard (64MB)</h5>
+                <span class="text-muted small">t=3, p=4, salt=16B</span>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="glass-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small">Quantum Commitment $C_q$</span>
+                    <i class="fa-solid fa-fingerprint text-warning"></i>
+                </div>
+                <h6 class="text-dark font-monospace text-truncate mb-0" style="max-width: 250px;">
+                    {{ user.quantum_commitment[:24] }}...
+                </h6>
+                <span class="text-muted small">BLAKE2b-512 Digest</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Login Audit Log for User -->
+    <div class="glass-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="text-dark fw-bold mb-0">
+                <i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i> Your Recent Login History
+            </h5>
+            <span class="badge badge-pqc">Last 10 Attempts</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Login Time</th>
+                        <th>IP Address</th>
+                        <th>Browser Client</th>
+                        <th>Status</th>
+                        <th>Failure Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in recent_logs %}
+                    <tr>
+                        <td class="font-monospace small">{{ log.login_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td class="font-monospace text-primary small">{{ log.ip_address }}</td>
+                        <td class="small text-truncate" style="max-width: 220px;" title="{{ log.browser }}">
+                            {{ log.browser }}
+                        </td>
+                        <td>
+                            {% if log.status == 'SUCCESS' %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="fa-solid fa-circle-check me-1"></i> SUCCESS</span>
+                            {% elif log.status == 'LOCKED' %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle"><i class="fa-solid fa-lock me-1"></i> LOCKED</span>
+                            {% else %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle"><i class="fa-solid fa-triangle-exclamation me-1"></i> FAILED</span>
+                            {% endif %}
+                        </td>
+                        <td class="small text-muted">{{ log.failure_reason or 'None' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-3">No login history recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

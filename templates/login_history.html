@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}System Audit Logs | QuantumShield Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h2 class="text-dark fw-bold">
+                <i class="fa-solid fa-clock-rotate-left text-warning me-2"></i> Security Audit Trail
+            </h2>
+            <p class="text-muted mb-0">System-wide login attempt history, client IPs, user agents & statuses.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('admin.login_history') }}" class="btn btn-outline-secondary btn-sm {% if not current_filter %}active{% endif %}">All Logs</a>
+                <a href="{{ url_for('admin.login_history', status='SUCCESS') }}" class="btn btn-outline-success btn-sm {% if current_filter == 'SUCCESS' %}active{% endif %}">Success</a>
+                <a href="{{ url_for('admin.login_history', status='FAILED') }}" class="btn btn-outline-warning btn-sm {% if current_filter == 'FAILED' %}active{% endif %}">Failed</a>
+                <a href="{{ url_for('admin.login_history', status='LOCKED') }}" class="btn btn-outline-danger btn-sm {% if current_filter == 'LOCKED' %}active{% endif %}">Locked</a>
+            </div>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-cyber-outline btn-sm ms-2">
+                <i class="fa-solid fa-gauge-high me-1"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Audit Logs Table -->
+    <div class="glass-card p-4">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th># Log ID</th>
+                        <th>Attempted User</th>
+                        <th>Login Timestamp</th>
+                        <th>Logout Timestamp</th>
+                        <th>IP Address</th>
+                        <th>User Agent (Browser / OS)</th>
+                        <th>Status</th>
+                        <th>Failure Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td class="font-monospace fw-bold">#{{ log.id }}</td>
+                        <td class="text-primary fw-medium">{{ log.attempted_username }}</td>
+                        <td class="font-monospace small">{{ log.login_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td class="font-monospace small text-muted">
+                            {% if log.logout_time %}
+                                {{ log.logout_time.strftime('%Y-%m-%d %H:%M:%S') }}
+                            {% else %}
+                                <span class="badge bg-secondary-subtle text-secondary font-monospace">Active Session / N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="font-monospace text-dark small">{{ log.ip_address }}</td>
+                        <td class="small text-truncate" style="max-width: 250px;" title="{{ log.browser }}">
+                            {{ log.browser }}
+                        </td>
+                        <td>
+                            {% if log.status == 'SUCCESS' %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="fa-solid fa-circle-check me-1"></i> SUCCESS</span>
+                            {% elif log.status == 'LOCKED' %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle"><i class="fa-solid fa-lock me-1"></i> LOCKED</span>
+                            {% else %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle"><i class="fa-solid fa-circle-xmark me-1"></i> FAILED</span>
+                            {% endif %}
+                        </td>
+                        <td class="small text-muted">{{ log.failure_reason or 'None' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">No security logs recorded.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

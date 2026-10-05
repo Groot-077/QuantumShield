@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}PQC Key Explorer | QuantumShield{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h2 class="text-dark fw-bold">
+                <i class="fa-solid fa-atom text-primary me-2"></i> Post-Quantum Cryptographic Keys
+            </h2>
+            <p class="text-muted mb-0">CRYSTALS-Kyber-512 (Module Learning With Errors) Key Pair & Quantum Commitment</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('user.dashboard') }}" class="btn btn-cyber-outline">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Kyber Public Key -->
+    <div class="glass-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="text-dark fw-bold mb-0">
+                <i class="fa-solid fa-unlock-keyhole text-primary me-2"></i> CRYSTALS-Kyber Public Key ($pk$)
+            </h5>
+            <button class="btn btn-outline-primary btn-sm" onclick="copyToClipboard('kyber-pk-box')">
+                <i class="fa-solid fa-copy me-1"></i> Copy Key
+            </button>
+        </div>
+        <p class="text-muted small">Public Matrix $A \in R_q^{k \times k}$ & Polynomial Vector $t = A s + e$. Used for Key Encapsulation.</p>
+        <div id="kyber-pk-box" class="key-box text-break">{{ user.kyber_public_key }}</div>
+    </div>
+
+    <!-- Kyber Private Key -->
+    <div class="glass-card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="text-dark fw-bold mb-0">
+                <i class="fa-solid fa-key text-warning me-2"></i> CRYSTALS-Kyber Private Key ($sk$)
+            </h5>
+            <button class="btn btn-outline-warning btn-sm" onclick="copyToClipboard('kyber-sk-box')">
+                <i class="fa-solid fa-copy me-1"></i> Copy Key
+            </button>
+        </div>
+        <p class="text-muted small">Secret Polynomial Vector $s \in R_q^k$. Used for Shared Secret Decapsulation.</p>
+        <div id="kyber-sk-box" class="key-box text-dark text-break" style="background: #fffbe6; border-color: #ffe58f;">
+            {{ user.kyber_private_key }}
+        </div>
+    </div>
+
+    <!-- Salt & Quantum Commitment -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="glass-card p-4 h-100">
+                <h5 class="text-dark fw-bold mb-2">
+                    <i class="fa-solid fa-cookie text-success me-2"></i> Cryptographic Salt ($S$)
+                </h5>
+                <p class="text-muted small">16-Byte Cryptographically Secure Random Salt Hex</p>
+                <div class="key-box text-success" style="background: #f6ffed; border-color: #b7eb8f;">{{ user.salt }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="glass-card p-4 h-100">
+                <h5 class="text-dark fw-bold mb-2">
+                    <i class="fa-solid fa-fingerprint text-danger me-2"></i> Quantum Commitment ($C_q$)
+                </h5>
+                <p class="text-muted small">BLAKE2b-512 Digest: $\text{BLAKE2b}(pk \parallel Argon2Hash \parallel S)$</p>
+                <div class="key-box text-danger" style="background: #fff1f0; border-color: #ffa39e;">
+                    {{ user.quantum_commitment }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backward Secrecy & Post-Compromise Security Ratchet -->
+    <div class="glass-card p-4 border-info mb-4">
+        <div class="d-md-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="text-info fw-bold mb-1">
+                    <i class="fa-solid fa-rotate text-info me-2"></i> Backward Secrecy Ratchet (Post-Compromise Security)
+                </h5>
+                <p class="text-muted small mb-md-0">
+                    Rotates your CRYSTALS-Kyber-512 lattice keypair and updates Quantum Commitment $C_q$. 
+                    Ensures past compromised keys provide zero utility for future sessions.
+                </p>
+            </div>
+            <div>
+                <form action="{{ url_for('user.ratchet_keys') }}" method="POST" class="d-inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}"/>
+                    <button type="submit" class="btn btn-info text-white btn-sm px-3 fw-bold">
+                        <i class="fa-solid fa-arrows-rotate me-1"></i> Ratchet PQC Keys
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backward Key Combination & Password Reconstruction Engine -->
+    <div class="glass-card p-4 border-primary">
+        <h5 class="text-primary fw-bold mb-2">
+            <i class="fa-solid fa-key-skeleton text-primary me-2"></i> Backward Key Combination & Password Verification Engine
+        </h5>
+        <p class="text-muted small mb-3">
+            Combines <strong>Kyber Public Key ($pk$)</strong>, <strong>Kyber Private Key ($sk$)</strong>, <strong>Salt ($S$)</strong>, and <strong>Quantum Commitment ($C_q$)</strong> 
+            to execute a backward verification pipeline against candidate password inputs.
+        </p>
+
+        <form action="{{ url_for('user.backward_verify') }}" method="POST" class="row g-3 align-items-center mb-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}"/>
+            <div class="col-md-8">
+                <input type="password" name="password" class="form-control form-control-cyber" placeholder="Enter candidate password to combine all keys backward" required>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100 fw-bold">
+                    <i class="fa-solid fa-calculator me-1"></i> Combine Keys & Verify Password
+                </button>
+            </div>
+        </form>
+
+        {% if backward_result %}
+        <div class="p-3 rounded border {% if backward_result.all_keys_valid %}bg-success-subtle border-success text-success-emphasis{% else %}bg-danger-subtle border-danger text-danger-emphasis{% endif %}">
+            <h6 class="fw-bold mb-2">
+                {% if backward_result.all_keys_valid %}
+                <i class="fa-solid fa-circle-check text-success me-1"></i> Backward Key Match: PASSED
+                {% else %}
+                <i class="fa-solid fa-circle-xmark text-danger me-1"></i> Backward Key Match: FAILED
+                {% endif %}
+            </h6>
+            <div class="small font-monospace">
+                • Password Argon2id Verification: <strong>{% if backward_result.password_valid %}VALID (Matches Hash){% else %}INVALID{% endif %}</strong><br>
+                • Lattice Key Consistency ($pk + sk$): <strong>{% if backward_result.lattice_keys_valid %}VALID (Encapsulation/Decapsulation Verified){% else %}INVALID{% endif %}</strong><br>
+                • Quantum Commitment Re-derivation ($C_q$): <strong>{% if backward_result.commitment_match %}MATCHED{% else %}MISMATCH{% endif %}</strong><br>
+                • Computed $C_q$: <code>{{ backward_result.computed_commitment[:40] }}...</code><br>
+                • Backward Proof Token: <code>{{ backward_result.backward_proof_token }}</code>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

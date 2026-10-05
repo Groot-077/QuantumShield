@@ -1,0 +1,95 @@
+"""
+QuantumShield Application Entry Point
+Main Flask application factory, database initialization, blueprint registration, and CLI commands.
+"""
+
+import os
+from flask import Flask, render_template
+from config import Config
+from models import db
+from models.admin import Admin
+from models.user import User
+from crypto.argon_hash import argon2_hasher
+from routes.main import main_bp
+from routes.auth import auth_bp
+from routes.user import user_bp
+from routes.admin import admin_bp
+
+from flask_wtf.csrf import CSRFProtect, generate_csrf
+
+csrf = CSRFProtect()
+
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+
+    # Initialize Extensions
+    db.init_app(app)
+    csrf.init_app(app)
+    app.jinja_env.globals['csrf_token'] = generate_csrf
+
+    # Register Blueprints
+    app.register_blueprint(main_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(user_bp)
+    app.register_blueprint(admin_bp)
+
+    # Create Database Tables & Default Seed Admin if not exists
+    with app.app_context():
+        db.create_all()
+        init_default_admin()
+
+    # Security Headers
+    @app.after_request
+    def add_security_headers(response):
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        return response
+
+    # Error Handlers
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template('404.html'), 404
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        db.session.rollback()
+        return render_template('500.html'), 500
+
+    return app
+
+
+def init_default_admin():
+    """Seeds or updates default admin account with configured admin credentials."""
+    try:
+        default_admin_hash = argon2_hasher.hash_password("Ankit@12345")
+        admin_user = Admin.query.filter((Admin.username == "admin") | (Admin.email == "ankitarya5092002@gmail.com")).first()
+        if not admin_user:
+            admin_user = Admin(
+                username="admin",
+                email="ankitarya5092002@gmail.com",
+                password_hash=default_admin_hash
+            )
+            db.session.add(admin_user)
+            print("INFO: Default admin account created: admin / Ankit@12345")
+        else:
+            admin_user.username = "admin"
+            admin_user.email = "ankitarya5092002@gmail.com"
+            admin_user.password_hash = default_admin_hash
+            print("INFO: Default admin account updated: admin / Ankit@12345")
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"DEBUG: Default admin check skipped: {e}")
+
+
+app = create_app()
+
+if __name__ == '__main__':
+    print("=" * 70)
+    print("  QUANTUMSHIELD: POST-QUANTUM SECURE AUTHENTICATION FRAMEWORK")
+    print("  Server running on http://127.0.0.1:5000")
+    print("=" * 70)
+    app.run(host='127.0.0.1', port=5000, debug=True)

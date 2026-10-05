@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}QuantumShield | Post-Quantum Password Authentication Framework{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Hero Section -->
+    <div class="row align-items-center mb-5 py-4">
+        <div class="col-lg-7 mb-4 mb-lg-0">
+            <span class="badge badge-pqc mb-3">
+                <i class="fa-solid fa-atom me-1"></i> NIST Post-Quantum Standardized (Kyber-512)
+            </span>
+            <h1 class="display-4 fw-bold mb-3">
+                Next-Gen <span class="text-primary">Post-Quantum</span> Password Authentication
+            </h1>
+            <p class="lead text-secondary mb-4">
+                QuantumShield protects user credentials against both classical GPU cracking attacks and future quantum computer threats using <strong>Argon2id memory-hard hashing</strong> and <strong>CRYSTALS-Kyber lattice cryptography</strong>.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-cyber btn-lg">
+                    <i class="fa-solid fa-user-plus me-2"></i> Register Account
+                </a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-cyber-outline btn-lg">
+                    <i class="fa-solid fa-right-to-bracket me-2"></i> User Login
+                </a>
+                <a href="{{ url_for('main.pqc_overview') }}" class="btn btn-outline-secondary btn-lg rounded-3">
+                    <i class="fa-solid fa-book-open me-2"></i> Tech Docs
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="glass-card p-4 text-center">
+                <div class="mb-3 text-primary">
+                    <i class="fa-solid fa-shield-cat fa-4x mb-2"></i>
+                </div>
+                <h4 class="fw-bold">Active PQC Backend</h4>
+                <p class="text-muted small">Status & Cryptographic Parameters</p>
+                <hr class="border-secondary-subtle">
+
+                <div class="text-start">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">PQC Algorithm:</span>
+                        <span class="text-primary font-monospace fw-bold">{{ pqc_info.algorithm }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Lattice Primitive:</span>
+                        <span class="font-monospace small">Module-LWE</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Password Hash:</span>
+                        <span class="text-success font-monospace fw-bold">Argon2id (64MB Memory)</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Quantum Commitment:</span>
+                        <span class="text-warning font-monospace small">BLAKE2b-512</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Backend Mode:</span>
+                        <span class="badge bg-primary">{{ pqc_info.backend }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Grid -->
+    <h3 class="fw-bold mb-4 text-center">
+        <i class="fa-solid fa-cubes me-2 text-primary"></i> Core Security Modules
+    </h3>
+
+    <div class="row g-4 mb-5">
+        <!-- Feature 1 -->
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100">
+                <div class="text-primary mb-3"><i class="fa-solid fa-memory fa-2x"></i></div>
+                <h5 class="fw-bold">Argon2id Memory-Hard Hashing</h5>
+                <p class="text-secondary small">
+                    Combines Argon2d and Argon2i to maximize resistance against both GPU/ASIC brute-force dictionary attacks and side-channel timing attacks.
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100">
+                <div class="text-primary mb-3"><i class="fa-solid fa-vector-square fa-2x"></i></div>
+                <h5 class="fw-bold">CRYSTALS-Kyber Lattice Keys</h5>
+                <p class="text-secondary small">
+                    Generates lattice-based public and private keypairs derived from Module Learning With Errors (M-LWE) over polynomial ring $\mathbb{R}_q$.
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100">
+                <div class="text-primary mb-3"><i class="fa-solid fa-lock fa-2x"></i></div>
+                <h5 class="fw-bold">Quantum Commitment Engine</h5>
+                <p class="text-secondary small">
+                    Binds lattice keypairs and memory-hard password hashes into an unforgeable $C_q$ commitment token using BLAKE2b-512.
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100">
+                <div class="text-warning mb-3"><i class="fa-solid fa-user-lock fa-2x"></i></div>
+                <h5 class="fw-bold">Account Lockout & Anti-Brute-Force</h5>
+                <p class="text-secondary small">
+                    Automatically freezes user access for 15 minutes upon 5 consecutive failed login attempts to neutralize credential stuffing.
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100">
+                <div class="text-success mb-3"><i class="fa-solid fa-shield-virus fa-2x"></i></div>
+                <h5 class="fw-bold">Comprehensive Security Audit</h5>
+                <p class="text-secondary small">
+                    Records all client IP addresses, browser user-agent profiles, timestamps, and login failure reasons into a tamper-evident audit history.
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="col-md-4">
+            <div class="glass-card p-4 h-100">
+                <div class="text-danger mb-3"><i class="fa-solid fa-user-gear fa-2x"></i></div>
+                <h5 class="fw-bold">Full Admin Control Panel</h5>
+                <p class="text-secondary small">
+                    Empowers administrators with real-time analytics, user account locking/unlocking, CRUD operations, and security audit log inspection.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

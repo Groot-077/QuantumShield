@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile | QuantumShield PQC{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="glass-card p-4 p-md-5">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="text-primary me-3"><i class="fa-solid fa-user-gear fa-3x"></i></div>
+                    <div>
+                        <h3 class="text-dark fw-bold mb-0">Account Profile Management</h3>
+                        <p class="text-muted mb-0">Username: <strong class="text-primary">{{ user.username }}</strong> | Registered: {{ user.created_at.strftime('%Y-%m-%d') }}</p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ url_for('user.profile') }}">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label text-dark fw-medium">Email Address</label>
+                        {{ form.email(class="form-control form-control-cyber", id="email") }}
+                        {% for error in form.email.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <hr class="border-secondary-subtle my-4">
+                    <h5 class="text-dark fw-bold mb-3"><i class="fa-solid fa-key text-warning me-2"></i> Update Password (Optional)</h5>
+
+                    <div class="mb-3">
+                        <label for="current_password" class="form-label text-dark fw-medium">Current Password (Required to confirm identity)</label>
+                        {{ form.current_password(class="form-control form-control-cyber", id="current_password", placeholder="Enter current password") }}
+                        {% for error in form.current_password.errors %}
+                            <div class="text-danger small mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="new_password" class="form-label text-dark fw-medium">New Password (Leave blank to keep existing password)</label>
+                        {{ form.new_password(class="form-control form-control-cyber", id="new_password", placeholder="Enter new strong password") }}
+                    </div>
+
+                    <button type="submit" class="btn btn-cyber py-2 px-4">
+                        <i class="fa-solid fa-floppy-disk me-2"></i> Save Profile Changes
+                    </button>
+                    <a href="{{ url_for('user.dashboard') }}" class="btn btn-outline-secondary py-2 px-4 ms-2">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

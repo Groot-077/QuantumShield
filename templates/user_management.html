@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}User Management CRUD | QuantumShield Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-6">
+            <h2 class="text-dark fw-bold">
+                <i class="fa-solid fa-users-gear text-primary me-2"></i> User Account Management
+            </h2>
+            <p class="text-muted mb-0">View registered users, inspect PQC commitments, manage lock states & CRUD.</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('admin.add_user') }}" class="btn btn-cyber me-2">
+                <i class="fa-solid fa-user-plus me-1"></i> Add New User
+            </a>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-cyber-outline">
+                <i class="fa-solid fa-gauge-high me-1"></i> Admin Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="glass-card p-3 mb-4">
+        <form method="GET" action="{{ url_for('admin.user_management') }}" class="row g-2 align-items-center">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-secondary-subtle text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <input type="text" name="search" class="form-control form-control-cyber" placeholder="Search by username or email..." value="{{ search_query }}">
+                </div>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-cyber-outline">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Users CRUD Table -->
+    <div class="glass-card p-4">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User Identity</th>
+                        <th>Kyber Public Key</th>
+                        <th>Quantum Commitment</th>
+                        <th>Failed Attempts</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td class="font-monospace fw-bold">#{{ user.id }}</td>
+                        <td>
+                            <strong class="text-dark d-block">{{ user.username }}</strong>
+                            <small class="text-muted">{{ user.email }}</small>
+                        </td>
+                        <td class="font-monospace small text-primary text-truncate" style="max-width: 140px;" title="{{ user.kyber_public_key }}">
+                            {{ user.kyber_public_key[:20] }}...
+                        </td>
+                        <td class="font-monospace small text-warning text-truncate" style="max-width: 140px;" title="{{ user.quantum_commitment }}">
+                            {{ user.quantum_commitment[:20] }}...
+                        </td>
+                        <td class="font-monospace text-center">
+                            <span class="badge {% if user.failed_attempts > 0 %}bg-warning-subtle text-warning border border-warning-subtle{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                                {{ user.failed_attempts }} / 5
+                            </span>
+                        </td>
+                        <td>
+                            {% if user.is_locked() %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle"><i class="fa-solid fa-lock me-1"></i> Locked</span>
+                            {% else %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="fa-solid fa-check me-1"></i> Active</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <!-- Lock / Unlock Toggle Form -->
+                                <form method="POST" action="{{ url_for('admin.toggle_lock', user_id=user.id) }}" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
+                                    {% if user.is_locked() %}
+                                        <button type="submit" class="btn btn-outline-success" title="Unlock Account">
+                                            <i class="fa-solid fa-lock-open"></i> Unlock
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-outline-warning" title="Lock Account">
+                                            <i class="fa-solid fa-lock"></i> Lock
+                                        </button>
+                                    {% endif %}
+                                </form>
+
+                                <!-- Delete Form -->
+                                <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}" class="d-inline ms-1" onsubmit="return confirm('Are you sure you want to delete user {{ user.username }}? This action is irreversible.');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
+                                    <button type="submit" class="btn btn-outline-danger" title="Delete User">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">No users found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
